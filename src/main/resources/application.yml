@@ -1,13 +1,26 @@
-spring:
-  application:
-    name: mock-company-webapp
+name: CI Pipeline
 
-  # In memory database that is populated dynamically from DataPopulator
-  datasource:
-    url: jdbc:h2:mem:productsdb
-    username: sa
-    password: password
-    driver-class-name: org.h2.Driver
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'  # Adjust the Java version as needed
+
+    - name: Build
+      run: ./gradlew assemble
+
+    - name: Test
+      run: ./gradlew test
